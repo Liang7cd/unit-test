@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "ptz_preset.h": "c",
+        "list.h": "c"
+    }
+}
