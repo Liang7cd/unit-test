@@ -1,0 +1,252 @@
+xtables_legacy_multi-xtables-legacy-multi.o: \
+ ../../iptables/xtables-legacy-multi.c ../config.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/stdio.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/features.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_config.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/cdefs.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stddef.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/types.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/wordsize.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/typesizes.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/pthreadtypes.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/endian.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/endian.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/byteswap.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/byteswap.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/byteswap-common.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_stdio.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/wchar.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/wchar.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_mutex.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/pthread.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sched.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/time.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/sched.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/time.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_clk_tck.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/signal.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/sigset.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/setjmp.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_pthread.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stdarg.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/stdio_lim.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/stdlib.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/types.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/select.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/select.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/sysmacros.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/alloca.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/string.h \
+ ../../iptables/xshared.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include-fixed/limits.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include-fixed/syslimits.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/limits.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/posix1_lim.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/local_lim.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/linux/limits.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_local_lim.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/posix2_lim.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stdbool.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stdint.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/stdint.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/netinet/in.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/socket.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/uio.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uio.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/socket.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/sockaddr.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/socket.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/socket.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/sockios.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/sockios.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/in.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/net/if.h \
+ ../../include/linux/netfilter_arp/arp_tables.h \
+ ../../include/linux/types.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/types.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/int-ll64.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/bitsperlong.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/bitsperlong.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/linux/posix_types.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/linux/stddef.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/posix_types.h \
+ /opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/posix_types.h \
+ ../../include/linux/netfilter_arp.h ../../include/linux/netfilter.h \
+ ../../include/linux/netfilter/x_tables.h ../../include/linux/kernel.h \
+ ../../include/linux/sysinfo.h ../../include/linux/const.h \
+ ../../include/linux/netfilter_ipv4/ip_tables.h \
+ ../../include/linux/netfilter_ipv4.h \
+ ../../include/linux/netfilter/xt_tcpudp.h \
+ ../../include/linux/netfilter_ipv6/ip6_tables.h \
+ ../../include/linux/netfilter_ipv6.h ../../iptables/xtables-multi.h \
+ ../../iptables/iptables-multi.h
+
+../config.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/stdio.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/features.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_config.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/cdefs.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stddef.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/types.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/wordsize.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/typesizes.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/pthreadtypes.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/endian.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/endian.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/byteswap.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/byteswap.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/byteswap-common.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_stdio.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/wchar.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/wchar.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_mutex.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/pthread.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sched.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/time.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/sched.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/time.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_clk_tck.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/signal.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/sigset.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/setjmp.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_pthread.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stdarg.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/stdio_lim.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/stdlib.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/types.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/select.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/select.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/sysmacros.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/alloca.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/string.h:
+
+../../iptables/xshared.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include-fixed/limits.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include-fixed/syslimits.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/limits.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/posix1_lim.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/local_lim.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/linux/limits.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uClibc_local_lim.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/posix2_lim.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stdbool.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/lib/gcc/arm-fullhanv3-linux-uclibcgnueabi/6.5.0/include/stdint.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/stdint.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/netinet/in.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/socket.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/sys/uio.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/uio.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/socket.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/sockaddr.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/socket.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/socket.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/sockios.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/sockios.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/bits/in.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/net/if.h:
+
+../../include/linux/netfilter_arp/arp_tables.h:
+
+../../include/linux/types.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/types.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/int-ll64.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/bitsperlong.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/bitsperlong.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/linux/posix_types.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/linux/stddef.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm/posix_types.h:
+
+/opt/fuhan/toolchain/arm-fullhanv3-linux-uclibcgnueabi-b6/arm-fullhanv3-linux-uclibcgnueabi/sysroot/usr/include/asm-generic/posix_types.h:
+
+../../include/linux/netfilter_arp.h:
+
+../../include/linux/netfilter.h:
+
+../../include/linux/netfilter/x_tables.h:
+
+../../include/linux/kernel.h:
+
+../../include/linux/sysinfo.h:
+
+../../include/linux/const.h:
+
+../../include/linux/netfilter_ipv4/ip_tables.h:
+
+../../include/linux/netfilter_ipv4.h:
+
+../../include/linux/netfilter/xt_tcpudp.h:
+
+../../include/linux/netfilter_ipv6/ip6_tables.h:
+
+../../include/linux/netfilter_ipv6.h:
+
+../../iptables/xtables-multi.h:
+
+../../iptables/iptables-multi.h:
