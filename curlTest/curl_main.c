@@ -1,105 +1,129 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include <unistd.h>
 
-int ovd_getRMSInfo(char *json_str_buf)
+/*====================================================================================================*/
+/*=======================================curl相关接口(Start)==========================================*/
+//是否存储get和post请求信息到文件
+#define RECEIVE_INFO_FILE 1
+
+/**
+ * @brief get请求和post请求数据接收回调函数
+ * 
+ * @param ptr 指向存储从libcurl接收到的数据的缓冲区
+ * @param size 数据块的大小（通常是字节大小）。这个参数表示缓冲区中每个数据单元的大小。
+ * @param nmemb 数据块的数量。这个参数表示缓冲区中有多少个这样的数据单元。因此，总的数据量是size * nmemb。
+ * @param userdata 用户提供的指针。在设置libcurl选项时，你可以传递一个指针给libcurl，这个指针通常是一个文件指针（如通过fopen返回的），而libcurl会将其传递给回调函数。你可以在回调函数中使用这个指针来写入数据。
+ * @return size_t 已成功处理的数据量。如果返回的数值与传入的size * nmemb不相等，libcurl会认为发生了一个错误，并会终止传输。因此，在实现回调函数时，应确保返回值正确，通常是成功写入的字节数。
+ */
+static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	lmLogDebug("");
-	// 创建一个root对象
-	cJSON *root = cJSON_CreateObject();
-	if (NULL == root)
-	{
-		lmLogError("Create cJSON Object error!");
-		return -1;
-	}
+#if RECEIVE_INFO_FILE
+    size_t realsize = size * nmemb;
+    FILE *ota_file_p = (FILE *)userdata;
 
-    {
-        //一机一密ID信息（既用户ID）
-        char authId[128] = {0};
-        //一机一密密钥信息
-        char authKey[128] = {0};
-        //设备cmei码信息
-        char cmei[128] = {0};
-        //设备mac地址信息
-        char mac_Addr[64] = {0};
-        lemei_nvram_get(lemei_nvram_dtype_Product_guid, authId, sizeof(authId));
-	    lemei_nvram_get(lemei_nvram_dtype_login_secret, authKey, sizeof(authKey));
-	    lemei_nvram_get(lemei_nvram_dtype_cmcc_cmei, cmei, sizeof(cmei));
-	    lemei_nvram_get(lemei_nvram_dtype_Device_Mac_Address, mac_Addr, sizeof(mac_Addr));
-	    lmLogDebug("authId:[%s], authKey:[%s], cmei:[%s], mac_Addr:[%s]", authId, authKey, cmei, mac_Addr);
-
-	    cJSON_AddStringToObject(root, "deviceId", authId);// 必填,设备唯一标识
-	    cJSON_AddStringToObject(root, "deviceType", CMCC_ANDLINK_ID);// 必填,设备真实MAC,全大写不带冒号
-
-        //时间戳（毫秒）
-        unsigned long long current_time_ms = marshmallow_GetStandardMS();
-	    cJSON_AddNumberToObject(root, "timestamp", current_time_ms);
-
-        //添加cmei,真实mac,sn,操作系统信息
-        cJSON_AddStringToObject(root, "cmei", cmei);// 必填,设备唯一标识
-        cJSON_AddStringToObject(root, "mac", mac_Addr);// 必填,设备真实MAC,全大写不带冒号
-        cJSON_AddStringToObject(root, "sn", authId);// 必填,设备真实SN
-        cJSON_AddStringToObject(root, "OS", "arm-linux32 4.9.129");	// 必填,操作系统(包含版本号)
-
-#if defined(CURRENT_COMPILE_PRODUCT_JM1111H) || defined(CURRENT_COMPILE_PRODUCT_TAI6000W) || defined(CURRENT_COMPILE_PRODUCT_TAI6000L) || defined(CURRENT_COMPILE_PRODUCT_TAI6250W)
-	    cJSON_AddStringToObject(root, "networkType", "Wi-Fi");		//必填,网络类型分RJ45（有线）,wifi, 5G, 4G, 3G, NB, ZigBee等
-#elif defined(CURRENT_COMPILE_PRODUCT_JM2111H) || defined(CURRENT_COMPILE_PRODUCT_TAI2000W)
-	    cJSON_AddStringToObject(root, "networkType", "RJ45");		//必填,网络类型分RJ45（有线）,wifi, 5G, 4G, 3G, NB, ZigBee等
-#else
-#error
-#endif
-
-        cJSON_AddStringToObject(root, "deviceVendor", CMCC_DEVICE_VENDOR_NAME);		// 必填,设备制造商
-	    cJSON_AddStringToObject(root, "deviceBrand", CMCC_DEVICE_BRAND_NAME);		// 必填,设备品牌
-	    cJSON_AddStringToObject(root, "deviceModel", CMCC_DEVICE_MODEL);  // 必填,设备型号
-#if defined(CURRENT_COMPILE_PRODUCT_JM1111H) || defined(CURRENT_COMPILE_PRODUCT_TAI6000W) || defined(CURRENT_COMPILE_PRODUCT_TAI6000L) || defined(CURRENT_COMPILE_PRODUCT_TAI6250W)
-	    cJSON_AddStringToObject(root, "wlanMac", mac_Addr);   // 可选,设备的WLAN MAC地址
-	    //电池供电:battery;   POE供电:POE;   市电:220V(110V);   USB供电:USB;   其他方式:other
-	    cJSON_AddStringToObject(root, "powerSupplyMode", "USB");	//  必填,供电方式
-
-	    char wifiRssi_buf[6] = {0};
-	    char wifi_ssid[128] = {0};
-        lemei_nvram_get(lemei_nvram_dtype_Wifi0_SSID, wifi_ssid, sizeof(wifi_ssid));
-	    int wifiRssi = marshmallow_network_get_wifi_RSSI(wifi_ssid);
-	    sprintf(wifiRssi_buf, "%d", (wifiRssi/2)-100);
-	    cJSON_AddStringToObject(root, "wifiRssi", wifiRssi_buf);//  可选,wifi信号场强
-#elif defined(CURRENT_COMPILE_PRODUCT_JM2111H) || defined(CURRENT_COMPILE_PRODUCT_TAI2000W)
-	    //电池供电:battery;   POE供电:POE;   市电:220V(110V);   USB供电:USB;   其他方式:other
-	    cJSON_AddStringToObject(root, "powerSupplyMode", "POE");	//  必填,供电方式
-#else
-#error
-#endif
-        //设备ip地址信息
-        char ip_addr[64] = {0};
-        marshmallow_network_get_ip(ip_addr);
-	    cJSON_AddStringToObject(root, "deviceIP", ip_addr); //   IP设备必填,设备IP
-
-        //固件版本号
-        char system_version[32] = {0};
-        if (strlen(system_version) == 0)
-            strcpy(system_version, get_version_number());
-
-	    // 4.添加版本信息
-	    // 4.1产品本身版本信息
-	    cJSON_AddStringToObject(root, "firmwareVersion", system_version);
-	    cJSON_AddStringToObject(root, "softwareVersion", system_version);
+    int write_len = fwrite(ptr, 1, realsize, ota_file_p);
+    while(write_len < realsize) {
+        printf("write_len:[%d], realsize:[%ld]\n", write_len, realsize);
+        int temp_write = fwrite(ptr+write_len, 1, realsize-write_len, ota_file_p);
+        write_len += temp_write;
     }
-	
-	char *jsonStr = cJSON_PrintUnformatted(root);
-    lmLogDebug("strlen:[%d], jsonStr:[%s]", strlen(jsonStr), jsonStr);
-	strncpy(json_str_buf, jsonStr, strlen(jsonStr));
-    cJSON_free(jsonStr);
-
-	cJSON_Delete(root);
-	return 0;
+    return realsize;
+#else
+    size_t realsize = size * nmemb;
+    memcpy((char *)userdata, ptr, realsize);
+    return realsize;
+#endif
 }
 
-static size_t read_callback(char *buffer, size_t size, size_t nitems, void *userdata)
+/**
+ * @brief https POST请求 获取数据。
+ * 
+ * @param urlAddr 需要访问的http/https地址。
+ * @param postParams post请求的信息。
+ * @param response 回调参数指针，提供write_callback和read_callback使用。
+ * @return CURLcode 访问结果，CURLE_OK表示成功，出错时可通过curl_easy_strerror()获取错误信息。
+ */
+static CURLcode curl_post_receive_request(const char *urlAddr, const char *postParams, char *response)
 {
-    lmLogDebug("");
-#if 1
+    //curl初始化
+    CURL *curl = curl_easy_init();
+    //curl返回值
+    CURLcode res;
+    if (curl)
+    {
+        // set params
+        //设置curl的请求头
+        struct curl_slist* header_list = NULL;
+        header_list = curl_slist_append(header_list, "Content-Type:application/json");
+        header_list = curl_slist_append(header_list, "Accept-Charset:utf-8");
+        //==========对应网页自定义的参数==========
+        //header_list = curl_slist_append(header_list, "User-Key:rms-sdhdict");
+        //header_list = curl_slist_append(header_list, "RMSToken:rms-sdhdict");
+        //======================================
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header_list);
+
+        //不接收响应头数据0代表不接收 1代表接收
+        curl_easy_setopt(curl, CURLOPT_HEADER, 0L);
+        //设置请求为post请求
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        //设置请求的URL地址
+        curl_easy_setopt(curl, CURLOPT_URL, urlAddr);
+        //设置post请求的参数
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postParams);
+        //设置ssl验证
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        //CURLOPT_VERBOSE的值为1时，会显示详细的调试信息
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        //设置数据接收回调函数
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)response);
+        //设置线程安全
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+        //设置超时时间
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
+
+        //开启post请求
+        res = curl_easy_perform(curl);
+    }
+    //释放curl 
+    curl_easy_cleanup(curl);
+    return res;
+}
+
+//是否存储get和post请求信息到文件
+#define UPLOAD_INFO_FILE 1
+/**
+ * @brief 通过CURLOPT_READFUNCTION设置，允许你定义一个自定义回调函数来提供上传的数据
+ * 
+ * @param ptr 缓冲区指针，你应该将要上传的数据写入这个指针指向的位置。
+ * @param size 表示每个数据块的大小。
+ * @param nmemb 数据块的数量。size*nmemb这两个值的乘积是缓冲区的总大小，以字节为单位。
+ * @param userdata 由 CURLOPT_READDATA 设置的指针，可以用来传递自定义数据到回调函数中。
+ * @return size_t 回调函数应返回写入到 ptr 的实际字节数。如果返回值小于 size * nmemb 且不为 0，会被认为上传过程已经结束。如果返回 CURL_READFUNC_ABORT 会中止传输。
+ */
+static size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+#if UPLOAD_INFO_FILE
+    FILE *readhere = (FILE *)userdata;
+    curl_off_t nread;
+
+    /* copy as much data as possible into the 'ptr' ptr, but no more than
+       'size' * 'nmemb' bytes! */
+    size_t retcode = fread(ptr, size, nmemb, readhere);
+
+    nread = (curl_off_t)retcode;
+
+    fprintf(stderr, "*** We read %" CURL_FORMAT_CURL_OFF_T
+            " bytes from file\n", nread);
+    return retcode;
+#else
     static int read_len = 0;//已读长度
-    size_t realsize = size * nitems;
+    size_t realsize = size * nmemb;
 
     int str_len = 0;
     if(read_len > 0) {
@@ -114,199 +138,302 @@ static size_t read_callback(char *buffer, size_t size, size_t nitems, void *user
     if(realsize > str_len) {
         realsize = str_len;
     }
-    memcpy(buffer, (char *)userdata, realsize);
+    memcpy(ptr, (char *)userdata+read_len, realsize);
     read_len += realsize;
-    lmLogDebug("str_len:[%d], realsize:[%d], read_len:[%d], userdata:[%s]", str_len, realsize, read_len, userdata);
+    printf("str_len:[%d], realsize:[%d], read_len:[%d], userdata:[%s]\n", str_len, realsize, read_len, (char*)userdata);
 
     return realsize;
-#else
-    FILE *readhere = (FILE *)userdata;
-    curl_off_t nread;
-
-    /* copy as much data as possible into the 'buffer' buffer, but no more than
-       'size' * 'nitems' bytes! */
-    size_t retcode = fread(buffer, size, nitems, readhere);
-
-    nread = (curl_off_t)retcode;
-
-    fprintf(stderr, "*** We read %" CURL_FORMAT_CURL_OFF_T
-            " bytes from file\n", nread);
-    return retcode;
 #endif
 }
 
-//get请求和post请求数据响应函数
-static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
+/**
+ * @brief https 上传文件。
+ * 
+ * @param urlAddr 需要访问的http/https地址。
+ * @param response 回调参数指针，提供write_callback和read_callback使用。
+ * @param file_name 需要上传的文件名字
+ * @return CURLcode 访问结果，CURLE_OK表示成功，出错时可通过curl_easy_strerror()获取错误信息。
+ */
+static CURLcode curl_upload_file(const char *urlAddr, char *response, const char *file_name)
 {
-    size_t realsize = size * nmemb;
-    memcpy((char *)userdata, ptr, realsize);
-    return realsize;
-}
+	FILE *file_p = fopen(file_name, "rb");
+    if (file_p == NULL) {
+		printf("fopen %s failed\n", file_name);
+        return -1;
+    }
 
-//http POST请求  
-static CURLcode curl_post_req(const char *url, const char *postParams, char *response)
-{
-    // curl初始化  
-    CURL *curl = curl_easy_init();
-    // curl返回值 
-    CURLcode res;
-    if (curl)
-    {
-        // set params
+    fseek(file_p, 0, SEEK_END);
+    unsigned long long file_size = ftell(file_p);
+    fseek(file_p, 0, SEEK_SET);
+
+    if (file_size <= 0) {		
+		printf("%s file_size is: %lld\n", file_name, file_size);
+        fclose(file_p);
+        return -1;
+    }
+
+	CURL *curl=NULL;        
+	CURLcode res; 
+	//初始化libcurl
+	//得到 easy interface型指针
+	curl = curl_easy_init();
+	if (curl) {
         //设置curl的请求头
         struct curl_slist* header_list = NULL;
-        header_list = curl_slist_append(header_list, "Content-Type:application/json");
-        header_list = curl_slist_append(header_list, "Accept-Charset:utf-8");
-        header_list = curl_slist_append(header_list, "User-Key:rms-sdhdict");
-        header_list = curl_slist_append(header_list, "RMSToken:rms-sdhdict");
+        header_list = curl_slist_append(header_list, "Content-Disposition:attachment");
+#if 0
+        //示例代码，具体格式规则由平台确定
+        char header_buf[256] = {0};
+        sprintf(header_buf, "filename=%s", file_name);
+        header_list = curl_slist_append(header_list, header_buf);
+#endif
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header_list);
 
-        //不接收响应头数据0代表不接收 1代表接收
-        curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-
-        //设置请求为post请求
-        curl_easy_setopt(curl, CURLOPT_POST, 1);
-
-        //设置请求的URL地址
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-
-        //设置post请求的参数
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postParams);
-
-        //设置ssl验证
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, false);
-
         //CURLOPT_VERBOSE的值为1时，会显示详细的调试信息
-        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
-
-/*
-        FILE *json_file_p = NULL;
-        json_file_p = fopen("/tmp/RMS_info.json", "w+");
-        int write_size = strlen(postParams);
-        if(write_size > 0)
-        {
-            int write_len = fwrite(postParams, 1, write_size, json_file_p);
-            while(write_len < write_size) {
-                lmLogWarn("write_len:[%d], write_size:[%d]", write_len, write_size);
-                int temp_write = fwrite(postParams+write_len, 1, write_size-write_len, json_file_p);
-                write_len += temp_write;
-            }
-        }else{
-            lmLogError("write_size:[%d]", write_size);
-        }
-        fclose(json_file_p);
-*/
-        //FILE *file_p = fopen("/tmp/RMS_info.json", "rb");
-
-/*
-        //设置数据接收和写入函数
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        //设置不验证CA和host
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); 
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); 
+		//设置访问URL
+		curl_easy_setopt(curl, CURLOPT_URL, urlAddr); 
+        //设置数据上传回调函数
         curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
-        curl_easy_setopt(curl, CURLOPT_READDATA, (void *)postParams);
+        curl_easy_setopt(curl, CURLOPT_READDATA, (void *)file_p);
         //上传使能 
 	    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-*/
-
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)response);
+	    //启用 PUT 请求
+	    curl_easy_setopt(curl, CURLOPT_PUT, 1L);
+	    //提供上传文件的大小 必须确保使用正确的数据大小 */
+	    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) file_size);
 
         //设置线程安全
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-
         //设置超时时间
-        //curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 6);
-        //curl_easy_setopt(curl, CURLOPT_TIMEOUT, 6);
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
 
-        // 开启post请求
-        res = curl_easy_perform(curl);
+        //执行 PUT 请求
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK) {			
+        	printf("curl_easy_perform failed: %s\n", curl_easy_strerror(res));
+    	}
+	}
+	curl_easy_cleanup(curl);
 
-        //fclose(file_p);
+    fclose(file_p);
+	return file_size;
+}
+
+/**
+ * @brief 下载指定链接中的文件
+ * 
+ * @param urlAddr 下载链接地址
+ * @param file_name 下载后的文件存储路径和名字
+ * @return int 成功0
+ */
+static int curl_download_file(const char *urlAddr, const char *file_name)
+{
+    //打开写入文件
+    FILE *file_p = NULL;
+    file_p = fopen(file_name, "w+");
+    if(file_p == NULL) {
+        printf("fopen file:[%s] error!\n", file_name);
+        return -1;
+    }
+    
+    // curl初始化  
+    CURL *curl = curl_easy_init();
+    if (!curl) {
+        printf("curl_easy_init() Failed\n");
+        return -2;
+    }
+
+    //先使用HEAD请求获取文件大小，
+    double getfileSize;
+    CURLcode res;
+    //设置访问URL
+    curl_easy_setopt(curl, CURLOPT_URL, urlAddr);
+    //设置ssl验证
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    //CURLOPT_VERBOSE的值为1时，会显示详细的调试信息
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    //只请求资源的元数据（即响应头），而不是整个响应内容。这意味着响应体不会被下载
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        return -3;
+    } else {
+        res = curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &getfileSize);
+        if(res == CURLE_OK) {
+            printf("File size: %.0f bytes\n", getfileSize);
+        } else {
+            fprintf(stderr, "Failed to get file size: %s\n", curl_easy_strerror(res));
+            return -4;
+        }
+    }
+
+    //循环下载，直到成功
+    while(1)
+    {
+        // set params
+        //不接收响应头数据0代表不接收 1代表接收
+        curl_easy_setopt(curl, CURLOPT_HEADER, 0L);
+        //使用GET请求下载文件
+        curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+        //设置数据接收和写入函数
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)file_p);
+        //设置线程安全
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+        //设置超时时间
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
+
+        // 开启get请求
+        CURLcode res = curl_easy_perform(curl);
+        if (res == CURLE_OK) {
+            printf("curl_easy_perform() succeed.\n");
+            break;
+        } else {
+            printf("curl_easy_perform() failed:[%s]\n", curl_easy_strerror(res));
+        }
     }
     //释放curl 
     curl_easy_cleanup(curl);
-    return res;
+    fclose(file_p);
+
+    //文件大小验证
+    if (access(file_name, F_OK) == 0) {
+        FILE *out_file_p = fopen(file_name, "rb");
+        if (out_file_p == NULL) {
+	    	printf("fopen %s failed\n", file_name);
+            return -5;
+        }
+
+        fseek(out_file_p, 0, SEEK_END);
+        unsigned long long file_size = ftell(out_file_p);
+        fseek(out_file_p, 0, SEEK_SET);
+
+        if (file_size != getfileSize) {		
+	    	printf("%s file_size is: %lld\n", file_name, file_size);
+            fclose(out_file_p);
+            return -6;
+        }
+        fclose(out_file_p);
+    }
+    return 0;
 }
+/*=======================================curl相关接口(End)============================================*/
+/*====================================================================================================*/
 
-int main(void) 
+/*====================================================================================================*/
+/*=======================================接口测试代码(Start)==========================================*/
+//上传文件名称
+#define UPLOAD_FILE_NAME "upload_file.txt"
+//接收信息存储文件名称
+#define RECEIVE_FILE_NAME "receive_info.txt"
+static int curl_post_test()
 {
-    lmLogDebug("");
-#if 1
-    // 初始化winsock的内容
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-
+    printf("start send post...\n");
+    char *url_post = "https://reqres.in";
     //char *url_post = "https://www.wangsansan.com/mydir/test/HttpsPostTest.php";
     //char *url_post = "https://180.168.70.186:10070";
-    char *url_post = "https://180.168.70.186:10070/device-manage/device/inform/dmReport";
-    
+    //char *url_post = "https://223.99.141.196:9008/device-manage/device/inform/dmReport";
+    //char *url_post = "https://180.168.70.186:10070/device-manage/device/inform/dmReport";
+
     char *paramsLogin = calloc(1, 5*1024);
-    char *resPost = calloc(1, 5*1024);
-    while(1)
-    {
-        sleep(30);
-        lmLogDebug("$$$$$");
-        memset(paramsLogin, 0, 5*1024);
-        memset(resPost, 0, 5*1024);
+    sprintf(paramsLogin, "{\"name\":\"morpheus\",\"job\":\"leader\"}", NULL);
 
-        ovd_getRMSInfo(paramsLogin);
-        CURLcode res = curl_post_req(url_post, paramsLogin, resPost);
-        if (res == CURLE_OK) {
-            lmLogDebug("resPost:[%s]", resPost);
-        } else {
-            lmLogError("curl_easy_perform() failed:[%s]", curl_easy_strerror(res));
+#if RECEIVE_INFO_FILE
+    //打开写入文件
+    FILE *file_p = NULL;
+    file_p = fopen(RECEIVE_FILE_NAME, "w+");
+    if(file_p == NULL) {
+        printf("fopen file:[/tmp/alertarea_speech.wav] error!\n");
+        return -1;
+    }
+    CURLcode res = curl_post_receive_request(url_post, paramsLogin, file_p);
+    if (res == CURLE_OK) {
+        if (access(RECEIVE_FILE_NAME, F_OK) == 0) {
+            printf("file %s exists.", RECEIVE_FILE_NAME);
         }
+    } else {
+        printf("curl_easy_perform() failed:[%s]\n", curl_easy_strerror(res));
     }
+    free(paramsLogin);
+    fclose(file_p);
+#else
+    char *resPost = calloc(1, 5*1024);
+    CURLcode res = curl_post_receive_request(url_post, paramsLogin, resPost);
+    if (res == CURLE_OK) {
+        printf("resPost:[%s]\n", resPost);
+    } else {
+        printf("curl_easy_perform() failed:[%s]\n", curl_easy_strerror(res));
+    }
+    free(paramsLogin);
+    free(resPost);
+#endif
+    printf("stop post Reconnect!\n");
+    return 0;
+}
+
+//下载文件名称
+#define DOWNLOAD_FILE_NAME "download_file.txt"
+static int curl_download_test()
+{
+    printf("start download...\n");
+    //char *url_addr = "http://shres.189smarthome.com:7777/image/Ota/Ota_5b3ced556c86bede2c7af712222cd844_VD-2_5.4.5.18_240920.bin";
+    char *url_addr = "https://staticcdn.189smarthome.com/image/Ota/Ota_84dd23105365328113a5b206f23c58b7_VD-2_5.4.5.19_241010.bin";
+    curl_download_file(url_addr, DOWNLOAD_FILE_NAME);
+    printf("stop download.\n");
+}
+
+/*=======================================接口测试代码(End)============================================*/
+/*====================================================================================================*/
+
+
+void usage(char *program_name)
+{
+    fprintf(stderr, "\nUsage: %s type_num\n\n", program_name);
+    fprintf(stderr, "Example:\n");
+    fprintf(stderr, "    %s 1\n", program_name);
+}
+
+//gcc curl_main.c -o curl_main -lcurl
+int main(int argc, char **argv)
+{
+    int ret = 0;
+    if (argc < 2) {
+        usage((char*)argv[0]);
+        return -1;
+    }
+
+    int type_num = atoi(argv[1]);
+    printf("%s@%d, type_num:[%d]\n", __FUNCTION__, __LINE__, type_num);
+
+    /**
+     * @brief 用于对整个 libcurl 库进行全局初始化
+     * curl_global_init必须在任何其他 libcurl 函数调用之前进行，并且在你程序进程的生命周期中至少调用一次。
+     * 如果你的程序在多线程环境中使用 libcurl，确保 curl_global_init 是进程中第一个调用的 libcurl 函数，以防止多线程竞态。
+     * 在程序结束时或者不再需要使用 libcurl 功能时，应调用 curl_global_cleanup，以释放分配的全局资源。
+     */
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+
+    switch (type_num)
+    {
+    case 1:
+        curl_post_test();
+        break;
+    case 2:
+        curl_download_test();
+        break;
+    default:
+        break;
+    }
+
+    //对应于 curl_global_init
     curl_global_cleanup();
-#endif
-
-#if 0
-    char *url_post0 = "http://httpbin.org/post";
-    char *paramsLogin0 = "key1=value1&key2=value2";
-    char resPost0[4096] = {0};
-    CURLcode res3 = curl_post_req(url_post0, paramsLogin0, resPost0);
-    if (res3 == CURLE_OK) {
-        lmLogDebug("resPost0:[%s]", resPost0);
-    }
-#endif
-
-#if 0
-    if(curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://example.com/");
-
-#ifdef SKIP_PEER_VERIFICATION
-    /*
-     * If you want to connect to a site who is not using a certificate that is
-     * signed by one of the certs in the CA bundle you have, you can skip the
-     * verification of the server's certificate. This makes the connection
-     * A LOT LESS SECURE.
-     *
-     * If you have a CA cert for the server stored someplace else than in the
-     * default bundle, then the CURLOPT_CAPATH option might come handy for
-     * you.
-     */
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-#endif
-
-#ifdef SKIP_HOSTNAME_VERIFICATION
-    /*
-     * If the site you are connecting to uses a different host name that what
-     * they have mentioned in their server certificate's commonName (or
-     * subjectAltName) fields, libcurl will refuse to connect. You can skip
-     * this check, but this will make the connection less secure.
-     */
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-#endif
-
-    /* Perform the request, res will get the return code */
-    res = curl_easy_perform(curl);
-    /* Check for errors */
-    if(res != CURLE_OK)
-      fprintf(stderr, "curl_easy_perform() failed: %s\n",
-              curl_easy_strerror(res));
- 
-    /* always cleanup */
-    curl_easy_cleanup(curl);
-    }
-#endif
-
     return 0;
 }
