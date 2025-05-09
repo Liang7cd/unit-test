@@ -26,10 +26,10 @@
 extern "C" {
 #endif
 
-//加载ini文件至内存
+//加载ini文件至内存（如果ini文件不存在，则自动创建）
 int iniFileLoad(const char *filename);
-//释放ini文件所占资源
-void iniFileFree();
+//释放ini文件所占资源（如果delFlag=1，则删除ini文件）
+int iniFileFree(int delFlag);
 
 //获取字符串，不带引号
 int iniGetString(const char *section, const char *key, char *value, int size, const char *defvalue);

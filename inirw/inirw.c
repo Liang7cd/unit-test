@@ -2,12 +2,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #define SIZE_LINE		1024		//每行最大长度
 #define SIZE_FILENAME	256			//文件名最大长度
-#define SIZE_BUFFER		(3680)	//文件数据BUF默认申请大小
+#define SIZE_BUFFER		(2048)	//文件数据BUF默认申请大小
 
-#define min(x, y)		(x <= y) ? x : y
+#define min(x, y) ({ \
+    typeof(x) _x = (x); \
+    typeof(y) _y = (y); \
+    (_x < _y) ? _x : _y; \
+})
 
 typedef enum _ELineType_ {
     LINE_IDLE,		//未处理行
@@ -17,12 +22,11 @@ typedef enum _ELineType_ {
 	LINE_VALUE		//值定义行
 } ELineType ;
 
-
+static int gInitFlag = 0;
 static char gFilename[SIZE_FILENAME] = {0};
 static char *gBuffer = NULL;
 static int gBuflen = 0;
 static int gBUfsize = 0;
-
 
 //去除串首尾空格，原串被改写
 static char *StrStrip(char *s)
@@ -162,11 +166,11 @@ static int GetLine(char *buf, int buflen, char *content, char **rem1, char **rem
 	//内容头尾已无空格
 	memcpy(content, cont1, i);
 	content[i] = 0;
-    //printf("content: %s\n",content);
+    //printf("content:[%s]\n",content);
 
 	if (content[0] == '[' && content[i - 1] == ']')
 		return LINE_SECTION;
-	if (strchr(content, ':') != NULL)
+	if (strchr(content, '=') != NULL)
 		return LINE_VALUE;
 	
 	return LINE_ERROR;
@@ -234,7 +238,7 @@ static void GetKeyValue(char *content, char **key, char **value)
 {
 	char *p=NULL;
 
-	p = strchr(content, ':');
+	p = strchr(content, '=');
 	*p = 0;
 	StrStrip(content);
 	StrStrip(p + 1);
@@ -242,42 +246,38 @@ static void GetKeyValue(char *content, char **key, char **value)
 	*value = p + 1;
 }
 
-
-//释放ini文件所占资源
-void iniFileFree()
+static int FreeBuffer()
 {
 	if (gBuffer != NULL) {
 		free(gBuffer);
 		gBuffer = NULL;
-		gBuflen = 0;
-		gBUfsize = 0;
 	}
+	gBuflen = 0;
+	gBUfsize = 0;
+	return 0;
 }
 
-//加载ini文件至内存
-int iniFileLoad(const char *filename)
+//加载配置文件信息到缓存区
+static int RefreshBuffer()
 {
-	FILE *file = NULL;
 	int len = 0;
-
-	if (strlen(filename) >= sizeof(gFilename))
-		return 0;
-    if(gFilename!=filename)
-    {
-	    strncpy(gFilename, filename,sizeof(gFilename));
-    }
+	FILE *file = NULL;
 	file = fopen(gFilename, "rb");
-	if (file == NULL) 
-		return 0;
-
+	if (file == NULL) {
+		perror("file open failed");
+		return -1;
+	}
 	fseek(file, 0, SEEK_END);
 	len = ftell(file);
-
+	
 	if(gBUfsize == 0 || len > gBUfsize)
 	{
-		iniFileFree();
-		gBUfsize = len>SIZE_BUFFER?len:SIZE_BUFFER;
-		printf("1.gBUfsize:%d, len:%d\n", gBUfsize, len);
+		if (gBuffer != NULL) {
+			free(gBuffer);
+			gBuffer = NULL;
+		}
+		gBUfsize = (len>SIZE_BUFFER?len:SIZE_BUFFER)+1;
+		printf("1.gBUfsize:[%d], len:[%d]\n", gBUfsize, len);
 		gBuffer = malloc(gBUfsize);
 		if (gBuffer == NULL) {
 			fclose(file);
@@ -285,15 +285,79 @@ int iniFileLoad(const char *filename)
 		}
 	} else {
 		memset(gBuffer, 0, gBUfsize);
-		printf("2.gBUfsize:%d, len:%d\n", gBUfsize, len);
+		printf("2.gBUfsize:[%d], len:[%d]\n", gBUfsize, len);
 	}
-
+	
 	fseek(file, 0, SEEK_SET);
 	len = fread(gBuffer, 1, len, file);
 	fclose(file);
 	gBuflen = len;
-    
-	return 1;
+	return 0;
+}
+
+//删除ini文件
+static int DeleteIniFile()
+{
+	if (gFilename[0] != 0) {
+		if (access(gFilename, F_OK) == 0) {
+			unlink(gFilename);
+			printf("ini file deleted.\n");
+		} else {
+			printf("ini file not exist.\n");
+		}
+	}
+	return 0;
+}
+
+//释放ini文件所占资源（如果delFlag=1，则删除ini文件）
+int iniFileFree(int delFlag)
+{
+	FreeBuffer();
+	if(delFlag) {
+		//删除ini文件
+		DeleteIniFile();
+	}
+	gInitFlag = 0;
+	return 0;
+}
+
+//加载ini文件至内存（如果ini文件不存在，则自动创建）
+int iniFileLoad(const char *filename)
+{
+	if (gInitFlag) {
+		printf("iniFileLoad already called.\n");
+		return -1;
+	}
+	
+	if (strlen(filename) >= sizeof(gFilename)) {
+		printf("filename too long\n");
+		return -1;
+	}
+	memset(gFilename, 0, sizeof(gFilename));
+	strncpy(gFilename, filename, sizeof(gFilename));
+
+    if (access(filename, F_OK) == 0) {
+        printf("ini file already exists.\n");
+		RefreshBuffer();
+    } else {
+        FILE *file = fopen(filename, "w");
+        if (file == NULL) {
+            perror("file open failed");
+            return -2;
+        }
+        fclose(file);
+        printf("file created succeed.\n");
+
+		gBUfsize = SIZE_BUFFER;
+		gBuffer = malloc(SIZE_BUFFER);
+		if (gBuffer == NULL) {
+			printf("malloc error\n");
+			return -3;
+		}
+		gBuflen = 0;
+    }
+	gInitFlag = 1;
+	return 0;
 }
 
 
@@ -327,9 +391,8 @@ static int iniGetValue(const char *section, const char *key, char *value, int ma
 			if (found || section == NULL) break;		//发现另一section
 			content[strlen(content) - 1] = 0;			//去尾部]
 			StrStrip(content + 1);						//去首尾空格
-			//printf("content+1:%s section:%s\n",content+1,section);
+			//printf("content+1:[%s], section:[%s]\n",content+1,section);
 			if (StriCmp(content + 1, section) == 0) {
-                
 				found = 1;
 			}
 		} else
@@ -339,9 +402,9 @@ static int iniGetValue(const char *section, const char *key, char *value, int ma
 			}
 			if (!found)
 				continue;
-            //printf("content:%s\n",content);
+            //printf("content:[%s]\n",content);
 			GetKeyValue(content, &key0, &value0);
-            //printf("key0:%s value0:%s\n",key0,value0);
+            //printf("key0:[%s], value0:[%s]\n",key0,value0);
 			if (StriCmp(key0, key) == 0) {
 				len = strlen(value0);
 				if (len == 0) break;		//空值视为无效
@@ -443,9 +506,9 @@ int iniSetString(const char *section, const char *key, const char *value)
 		file = fopen(gFilename, "ab");
 		if (file == NULL) 
 			return 0;
-		fprintf(file, "\n[%s]\n%s:%s\n", section, key, value);
+		fprintf(file, "\n[%s]\n%s=%s\n", section, key, value);
 		fclose(file);
-		iniFileLoad(gFilename);
+		RefreshBuffer();
 		return 1;
 	}
 
@@ -469,12 +532,12 @@ int iniSetString(const char *section, const char *key, const char *value)
 					len = (int)(nextline - gBuffer);			//整行连同注释一并删除
 				} else {
 					//value有效，改写
-					fprintf(file, "%s:%s", key, value);
+					fprintf(file, "%s=%s", key, value);
 					len = (int)(rem1 - gBuffer);				//保留尾部原注释!
 				}
 				fwrite(gBuffer + len, 1, gBuflen - len, file);	//写入key所在行含注释之后部分
 				fclose(file);
-				iniFileLoad(gFilename);
+				RefreshBuffer();
 				return 1;
 			}	
 		}
@@ -495,10 +558,10 @@ int iniSetString(const char *section, const char *key, const char *value)
 		return 0;
 	len = (int)(cont2 - gBuffer);
 	fwrite(gBuffer, 1, len, file);					//写入key之前部分
-	fprintf(file, "%s:%s\n", key, value);
+	fprintf(file, "%s=%s\n", key, value);
 	fwrite(gBuffer + len, 1, gBuflen - len, file);	//写入key之后部分
 	fclose(file);
-	iniFileLoad(gFilename);
+	RefreshBuffer();
 	return 1;
 }
 
@@ -520,3 +583,4 @@ int iniSetInt(const char *section, const char *key, int value, int base)
 		return iniSetString(section, key, valstr);
 	}
 }
+

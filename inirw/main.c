@@ -24,24 +24,24 @@ int main(int argc, char *argv[])
 
     char *deviceAlarms = "deviceAlarms";
     printf_test(deviceAlarms);
-	iniSetInt(deviceAlarms, "TestText1", 0, 10);
-	iniSetInt(deviceAlarms, "TestText2", 1, 10);
-    iniSetInt(deviceAlarms, "TestText3", 2, 10);
+	iniSetInt(deviceAlarms, "TestText1", 1, 10);
+	iniSetInt(deviceAlarms, "TestText2", 2, 10);
+    iniSetInt(deviceAlarms, "TestText3", 3, 10);
     printf_test(deviceAlarms);
-    iniSetInt(deviceAlarms, "TestText1", 3, 10);
-	iniSetInt(deviceAlarms, "TestText2", 4, 10);
-    iniSetInt(deviceAlarms, "TestText3", 5, 10);
-    printf_test(deviceAlarms);
+    //iniSetInt(deviceAlarms, "TestText1", 3, 10);
+	//iniSetInt(deviceAlarms, "TestText2", 4, 10);
+    //iniSetInt(deviceAlarms, "TestText3", 5, 10);
+    //printf_test(deviceAlarms);
 
-    char *deviceOSD = "deviceOSD";
-    printf_test(deviceOSD);
-	iniSetInt(deviceOSD, "TestText1", 0, 10);
-	iniSetInt(deviceOSD, "TestText2", 1, 10);
-    iniSetInt(deviceOSD, "TestText3", 2, 10);
-    printf_test(deviceOSD);
+    //char *deviceOSD = "deviceOSD";
+    //printf_test(deviceOSD);
+	//iniSetInt(deviceOSD, "TestText1", 0, 10);
+	//iniSetInt(deviceOSD, "TestText2", 1, 10);
+    //iniSetInt(deviceOSD, "TestText3", 2, 10);
+    //printf_test(deviceOSD);
 
     //释放资源
-    iniFileFree();
+    iniFileFree(0);
 
     return 0;
 }
