@@ -3,8 +3,7 @@ wget https://github.com/eclipse/paho.mqtt.c/archive/refs/tags/v1.3.0.tar.gz
 tar -xzf v1.3.0.tar.gz && cd paho.mqtt.c-1.3.0
 
 # 创建并进入编译路径
-mkdir build && cd build
-
+mkdir -p build && cd build
 
 # 不需要支持mqtts
 #配置环境变量

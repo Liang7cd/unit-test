@@ -3,7 +3,7 @@ wget https://www.openssl.org/source/openssl-1.1.1s.tar.gz
 tar -xzf openssl-1.1.1s.tar.gz && cd openssl-1.1.1s
 
 # 创建并进入编译路径
-mkdir build && cd build
+mkdir -p build && cd build
 
 # 不需要支持mqtts
 #配置环境变量
